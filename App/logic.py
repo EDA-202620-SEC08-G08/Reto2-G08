@@ -11,7 +11,13 @@ def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
-    #TODO: Llama a las funciónes de creación de las estructuras de datos
+    catalog={
+        "orders": lt.new_list(),
+        "orders_linked": slt.new_list(),
+        "orders_map": mlp.new_map(1000),
+        "orders_map_chain": msc.new_map(1000)
+    }
+    return catalog
     pass
 
 

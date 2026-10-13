@@ -113,4 +113,50 @@ def sub_list(my_list, pos, size):
         }
         return sub_list
 
+def merge_sort(my_list, sort_crit):
+    n = my_list["size"]
+
+    if n > 1:
+        mid = n // 2
+        left = new_list()
+        right = new_list()
+
+        for i in range(0, mid):
+            add_last(left, get_element(my_list, i))
+
+        for i in range(mid, n):
+            add_last(right, get_element(my_list, i))
+
+        merge_sort(left, sort_crit)
+        merge_sort(right, sort_crit)
+
+        i = 0
+        j = 0
+        k = 0
+        n_left = left["size"]
+        n_right = right["size"]
+
+        while i < n_left and j < n_right:
+            element_left = get_element(left, i)
+            element_right = get_element(right, j)
+
+            if sort_crit(element_left, element_right):
+                change_info(my_list, k, element_left)
+                i += 1
+            else:
+                change_info(my_list, k, element_right)
+                j += 1
+            k += 1
+
+        while i < n_left:
+            change_info(my_list, k, get_element(left, i))
+            i += 1
+            k += 1
+
+        while j < n_right:
+            change_info(my_list, k, get_element(right, j))
+            j += 1
+            k += 1
+
+    return my_list
     

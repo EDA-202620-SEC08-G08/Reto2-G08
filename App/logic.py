@@ -1,5 +1,11 @@
 import time
-import 
+import csv
+import os
+
+from DataStructures.List import array_list as lt
+from DataStructures.List import single_linked_list as slt
+from DataStructures.Map import map_linear_probing as mlp
+from DataStructures.Map import map_separate_chaining as msc
 
 def new_logic():
     """
@@ -23,6 +29,8 @@ def load_data(catalog, filename):
         for row in reader:
             lt.add_last(catalog["orders"], row)
             slt.add_last(catalog["orders_linked"], row)
+            mlp.put(catalog["orders_map"], row["id"], row)
+            msc.put(catalog["orders_map_chain"], row["id"], row)
     end_time = get_time()
     return catalog, delta_time(start_time, end_time)
 

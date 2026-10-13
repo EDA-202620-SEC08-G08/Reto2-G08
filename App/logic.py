@@ -117,8 +117,33 @@ def req_3(catalog, fechaPedido, valor_min, valor_max):
     """
     Retorna el resultado del requerimiento 3
     """
-    # TODO: Modificar el requerimiento 3
-    pass
+    start_time = get_time()
+
+    fecha = mlp.get(catalog["ordenFecha"], fechaPedido)
+    count = 0
+    amount__total = 0
+    marketing_spend_total = 0
+    aporte_comercial_total = 0
+
+    filtrados = msc.new_map(1000, 4)
+
+    for orden in fecha:
+        if valor_min <= orden["Amount"] <= valor_max:
+            count += 1
+            amount__total += orden["Amount"]
+            marketing_spend_total += orden["Marketing_Spend"]
+            aporte_comercial = orden["Amount"] - orden["Marketing_Spend"]
+            aporte_comercial_total += aporte_comercial
+            orden["Aporte_Comercial"] = aporte_comercial
+            llave = orden["Order_ID"] 
+            mlp.put(filtrados, llave, orden)
+    
+
+
+            
+
+    
+    
 
 
 def req_4(catalog):

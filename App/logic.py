@@ -14,8 +14,16 @@ def load_data(catalog, filename):
     """
     Carga los datos del reto
     """
-    # TODO: Realizar la carga de datos
-    pass
+    start_time = get_time()
+    csv.field_size_limit(2147483647)
+    path=os.path.join("Data", "Data",filename)
+    with open(path, encoding="utf-8-sig") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            lt.add_last(catalog["orders"], row)
+            slt.add_last(catalog["orders_linked"], row)
+    end_time = get_time()
+    return catalog, delta_time(start_time, end_time)
 
 # Funciones de consulta sobre el catálogo
 

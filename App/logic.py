@@ -100,8 +100,84 @@ def load_data(catalog, filename):
                 mlp.put(catalog["pedidos_por_canal"], canal, lista_canal)
             lt.add_last(lista_canal, row)
 
+
+    pedidos = catalog["orders"]
+    total_pedidos = lt.size(pedidos)
+
+    canales = {}
+
+    for canal in ["Retail", "Online", "Wholesale"]:
+        lista_canal = mlp.get(catalog["pedidos_por_canal"], canal)
+
+        if lista_canal is None:
+            canales[canal] = 0
+        else:
+            canales[canal] = lt.size(lista_canal)
+
+    fecha_min = None
+    fecha_max = None
+    pedido_min = None
+    pedido_max = None
+
+    pedidos_ordenados = lt.new_list()
+
+    for i in range(total_pedidos):
+        pedido = lt.get_element(pedidos, i)
+        fecha = pedido["Order_Date"]
+
+        lt.add_last(pedidos_ordenados, pedido)
+
+        if fecha_min is None or fecha < fecha_min:
+            fecha_min = fecha
+
+        if fecha_max is None or fecha > fecha_max:
+            fecha_max = fecha
+
+        if pedido_min is None or pedido["Amount"] < pedido_min["Amount"]:
+            pedido_min = pedido
+
+        if pedido_max is None or pedido["Amount"] > pedido_max["Amount"]:
+            pedido_max = pedido
+
+    def comparar(pedido1, pedido2):
+        if pedido1["Amount"] != pedido2["Amount"]:
+            return pedido1["Amount"] > pedido2["Amount"]
+
+        return pedido1["Order_ID"] <= pedido2["Order_ID"]
+
+    lt.merge_sort(pedidos_ordenados, comparar)
+
+    primeros = lt.new_list()
+    ultimos = lt.new_list()
+
+    cantidad = 5
+
+    if total_pedidos < cantidad:
+        cantidad = total_pedidos
+
+    for i in range(cantidad):
+        pedido = lt.get_element(pedidos_ordenados, i)
+        lt.add_last(primeros, pedido)
+
+    for i in range(total_pedidos - cantidad, total_pedidos):
+        pedido = lt.get_element(pedidos_ordenados, i)
+        lt.add_last(ultimos, pedido)
+
+    resumen = {
+        "total_pedidos": total_pedidos,
+        "canales": canales,
+        "fecha_min": fecha_min,
+        "fecha_max": fecha_max,
+        "pedido_min": pedido_min,
+        "pedido_max": pedido_max,
+        "primeros": primeros,
+        "ultimos": ultimos
+    }
+    
     end_time = get_time()
-    return catalog, delta_time(start_time, end_time)
+    tiempo = delta_time(start_time, end_time)
+
+    return catalog, tiempo, resumen
 
 # Funciones de consulta sobre el catálogo
 

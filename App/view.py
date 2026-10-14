@@ -36,6 +36,7 @@ def load_data(control):
     print("4- chocolate_sale_60_ptc.csv")
     print("5- chocolate_sale_80_ptc.csv")
     print("6- chocolate_sale_100_ptc.csv")
+
     opcion = input("Seleccione el archivo que desea cargar: ")
 
     if opcion == "1":
@@ -48,24 +49,91 @@ def load_data(control):
         archivo = "chocolate_sale_60_ptc.csv"
     elif opcion == "5":
         archivo = "chocolate_sale_80_ptc.csv"
-    else:
+    elif opcion == "6":
         archivo = "chocolate_sale_100_ptc.csv"
+    else:
+        print("Opción incorrecta")
+        return control
 
-    control, tiempo = logic.load_data(control, archivo)
+    nuevo_control = logic.new_logic()
+    catalog, tiempo, resumen = logic.load_data(nuevo_control, archivo)
+
+    control.clear()
+    control.update(catalog)
 
     print(f"\nArchivo cargado: {archivo}")
-    print(f"Carga de datos ejecutada en {tiempo:.2f} milisegundos")
-    print(f"Total de pedidos cargados: {lt.size(control['orders'])}")
+    print(f"Tiempo de carga: {tiempo:.2f} milisegundos")
+    print(f"Total de pedidos cargados: {resumen['total_pedidos']}")
+
+    print("\nPEDIDOS POR CANAL")
+
+    for canal in resumen["canales"]:
+        print(f"{canal}: {resumen['canales'][canal]}")
+
+    if resumen["total_pedidos"] == 0:
+        print("\nNo se encontraron pedidos en el archivo")
+        return control
+
+    print(f"\nFecha más antigua: {resumen['fecha_min']}")
+    print(f"Fecha más reciente: {resumen['fecha_max']}")
+
+    campos = [
+        "Order_ID",
+        "Product",
+        "Country",
+        "Channel",
+        "Order_Date",
+        "Boxes_Shipped",
+        "Price_per_Box",
+        "Amount"
+    ]
+
+    print("\nPEDIDO CON MENOR AMOUNT")
+
+    pedido_min = resumen["pedido_min"]
+
+    for campo in campos:
+        print(f"{campo}: {pedido_min[campo]}")
+
+    print("\nPEDIDO CON MAYOR AMOUNT")
+
+    pedido_max = resumen["pedido_max"]
+
+    for campo in campos:
+        print(f"{campo}: {pedido_max[campo]}")
+
+    print("\nPRIMEROS CINCO PEDIDOS")
+
+    primeros = resumen["primeros"]
+
+    for i in range(lt.size(primeros)):
+        pedido = lt.get_element(primeros, i)
+
+        print(f"\nPedido {i + 1}")
+
+        for campo in campos:
+            print(f"{campo}: {pedido[campo]}")
+
+    print("\nÚLTIMOS CINCO PEDIDOS")
+
+    ultimos = resumen["ultimos"]
+
+    for i in range(lt.size(ultimos)):
+        pedido = lt.get_element(ultimos, i)
+
+        print(f"\nPedido {i + 1}")
+
+        for campo in campos:
+            print(f"{campo}: {pedido[campo]}")
 
     return control
-
 
 
 def print_data(control, id):
     """
         Función que imprime un dato dado su ID
     """
-pass    
+    pass    
 
 def print_req_1(control):
     """
@@ -111,8 +179,52 @@ def print_req_2(control):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    pais = input("Ingrese el país: ")
+    min_cajas = int(input("Ingrese el mínimo de cajas: "))
+    max_cajas = int(input("Ingrese el máximo de cajas: "))
+
+    if min_cajas > max_cajas:
+        print("El mínimo no puede ser mayor que el máximo")
+        return
+
+    resultado = logic.req_2(control, pais, min_cajas, max_cajas)
+
+    tiempo = resultado["tiempo"]
+    total_pedidos = resultado["total_pedidos"]
+    productos_diferentes = resultado["productos_diferentes"]
+    promedio_marketing = resultado["promedio_marketing"]
+    promedio_amount = resultado["promedio_amount"]
+    producto_frecuente = resultado["producto_frecuente"]
+    frecuencia_maxima = resultado["frecuencia_maxima"]
+    pedidos = resultado["pedidos"]
+
+    print(f"\nRequerimiento 2 ejecutado en {tiempo:.2f} milisegundos")
+    print(f"Cantidad de pedidos que cumplen el filtro: {total_pedidos}")
+    print(f"Cantidad de productos diferentes: {productos_diferentes}")
+    print(f"Promedio de Marketing Spend: ${promedio_marketing:.2f}")
+    print(f"Promedio de Amount: ${promedio_amount:.2f}")
+    print(f"Producto más frecuente: {producto_frecuente}")
+    print(f"Cantidad de pedidos de ese producto: {frecuencia_maxima}")
+
+    if total_pedidos == 0:
+        print("\nNo se encontraron pedidos con los parámetros ingresados")
+        return
+
+    if total_pedidos > 20:
+        print(f"\nSe muestran los primeros 10 y últimos 10 pedidos de {total_pedidos}")
+
+    for pos in range(lt.size(pedidos)):
+        pedido = lt.get_element(pedidos, pos)
+
+        print(f"\nOrder_ID: {pedido['Order_ID']}")
+        print(f"Product: {pedido['Product']}")
+        print(f"Channel: {pedido['Channel']}")
+        print(f"Order_Date: {pedido['Order_Date']}")
+        print(f"Boxes_Shipped: {pedido['Boxes_Shipped']}")
+        print(f"Price_per_Box: ${pedido['Price_per_Box']:.2f}")
+        print(f"Marketing_Spend: ${pedido['Marketing_Spend']:.2f}")
+        print(f"Amount: ${pedido['Amount']:.2f}")
+
 
 
 def print_req_3(control):
@@ -135,8 +247,51 @@ def print_req_5(control):
     """
         Función que imprime la solución del Requerimiento 5 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    n = int(input("Ingrese el número N de productos a listar: "))
+    pais = input("Ingrese el país: ")
+    fecha_inicio = input("Ingrese la fecha inicial (YYYY-MM-DD): ")
+    fecha_fin = input("Ingrese la fecha final (YYYY-MM-DD): ")
+
+    if n <= 0:
+        print("El número de productos debe ser mayor que cero")
+        return
+
+    if fecha_inicio > fecha_fin:
+        print("La fecha inicial no puede ser mayor que la final")
+        return
+
+    resultado = logic.req_5(
+        control, n, pais, fecha_inicio, fecha_fin
+    )
+
+    tiempo = resultado["tiempo"]
+    total_pedidos = resultado["total_pedidos"]
+    total_productos = resultado["total_productos"]
+    recaudo_total = resultado["recaudo_total"]
+    top_productos = resultado["top_productos"]
+
+    print(f"\nRequerimiento 5 ejecutado en {tiempo:.2f} milisegundos")
+    print(f"Cantidad de pedidos que cumplen el filtro: {total_pedidos}")
+    print(f"Cantidad de productos diferentes: {total_productos}")
+    print(f"Amount total de los pedidos filtrados: ${recaudo_total:.2f}")
+
+    if total_pedidos == 0:
+        print("\nNo se encontraron pedidos con los parámetros ingresados")
+        return
+
+    print(f"\nTop {lt.size(top_productos)} productos con mayor recaudo:")
+
+    for pos in range(lt.size(top_productos)):
+        producto = lt.get_element(top_productos, pos)
+
+        print(f"\nPosición: {pos + 1}")
+        print(f"Product: {producto['Product']}")
+        print(f"Cantidad de pedidos: {producto['numero_pedidos']}")
+        print(f"Total de cajas enviadas: {producto['total_cajas']}")
+        print(f"Recaudo total: ${producto['recaudo_total']:.2f}")
+        print(f"Precio promedio por caja: ${producto['precio_promedio']:.2f}")
+        print(f"Descuento promedio: {producto['descuento_promedio']:.2f}%")
+        print(f"Marketing total: ${producto['marketing_total']:.2f}")
 
 
 def print_req_6(control):

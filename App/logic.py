@@ -385,7 +385,7 @@ def req_5(catalog, n, pais, fecha_inicio, fecha_fin):
 
 
 
-def req_6(catalog):
+def req_6(catalog, n, producto, fecha_inicial, fecha_final):
     """
     Retorna el resultado del requerimiento 6
     """

@@ -222,7 +222,8 @@ def req_1(catalog, anio, mes, descuento_min, descuento_max):
         promedio_cajas = suma_cajas / total_pedidos
 
     end_time = get_time()
-    return (delta_time(start_time, end_time), total_pedidos, total_amount,
+    tiempo= delta_time(start_time, end_time)
+    return (tiempo, total_pedidos, total_amount,
             promedio_precio, promedio_cajas, filtrados)
 
 
@@ -534,7 +535,8 @@ def req_6(catalog, n, producto, fecha_inicial, fecha_final):
         lt.add_last(top_paises, lt.get_element(ranking, i))
 
     end_time = get_time()
-    return (delta_time(start_time, end_time), total_pedidos, total_paises,
+    tiempo = delta_time(start_time, end_time)
+    return (tiempo, total_pedidos, total_paises,
             amount_total, marketing_total, top_paises)
 
 

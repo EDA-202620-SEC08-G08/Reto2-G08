@@ -65,7 +65,7 @@ def is_present(my_list,element,cmp_funcion):
 def is_empty(my_list):
     return my_list["size"] == 0
 def last_element(my_list):
-    if my_list == 0:
+    if my_list["size"] == 0:
         raise Exception('IndexError: list index out of range')
     return my_list["last"]["info"]
 def delete_element(my_list, pos):

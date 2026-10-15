@@ -345,7 +345,7 @@ def req_3(catalog, fechaPedido, valor_min, valor_max):
     """
     start_time = get_time()
 
-    fecha = mlp.get(catalog["ordenFecha"], fechaPedido)
+    fecha = mlp.get(catalog["OrdenFecha"], fechaPedido)
     count = 0
     amount__total = 0
     marketing_spend_total = 0

@@ -249,18 +249,78 @@ def print_req_2(control):
 
 def print_req_3(control):
     """
-        Función que imprime la solución del Requerimiento 3 en consola
+    Función que imprime la solución del Requerimiento 3 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    fechaPedido = input("Ingrese la fecha del pedido (YYYY-MM-DD): ")
+    valor_min = float(input("Ingrese el valor mínimo de costo total: "))
+    valor_max = float(input("Ingrese el valor máximo de costo total: "))
+
+    tiempo, count, amount_total, marketing_total, aporte_total, pedidos = logic.req_3(control, fechaPedido, valor_min, valor_max)
+
+    print(f"\nRequerimiento 3 ejecutado en {tiempo:.2f} milisegundos")
+    print(f"Cantidad de pedidos que cumplen el filtro: {count}")
+    print(f"Monto total recaudado: ${amount_total:.2f}")
+    print(f"Total inversión en mercadeo: ${marketing_total:.2f}")
+    print(f"Aporte comercial total: ${aporte_total:.2f}")
+
+    if count == 0:
+        print("\nNo se encontraron pedidos con los parámetros ingresados")
+        return
+
+    if count > 20:
+        print(f"\nSe muestran los primeros 10 y los últimos 10 pedidos de {count}")
+
+    for pos in range(0, lt.size(pedidos)):
+        if count > 20 and pos >= 10 and pos < count - 10:
+            continue
+        pedido = lt.get_element(pedidos, pos)
+        print(f"\nOrder_ID: {pedido['Order_ID']}")
+        print(f"Product: {pedido['Product']}")
+        print(f"Country: {pedido['Country']}")
+        print(f"Order_Date: {pedido['Order_Date']}")
+        print(f"Marketing_Spend: ${pedido['Marketing_Spend']:.2f}")
+        print(f"Boxes_Shipped: {pedido['Boxes_Shipped']}")
+        print(f"Amount: ${pedido['Amount']:.2f}")
+        print(f"Aporte comercial: ${pedido['Aporte_Comercial']:.2f}")
 
 
 def print_req_4(control):
     """
-        Función que imprime la solución del Requerimiento 4 en consola
+    Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    producto = input("Ingrese el producto (Product): ")
+    pais = input("Ingrese el país (Country): ")
+
+    resultado = logic.req_4(control, pais, producto)
+
+    if resultado is None:
+        print("\nNo se encontraron pedidos con los parámetros ingresados")
+        return
+
+    tiempo, count, prom_box, prom_disc, prom_mark, prom_box_ship, amount1, amount2 = resultado
+
+    print(f"\nRequerimiento 4 ejecutado en {tiempo:.2f} milisegundos")
+    print(f"Cantidad de pedidos que cumplen el filtro: {count}")
+    print(f"Precio promedio por caja (Price_per_Box): ${prom_box:.2f}")
+    print(f"Promedio de descuento (Discount_Pct): {prom_disc * 100:.2f}%")
+    print(f"Promedio de Marketing Spend: ${prom_mark:.2f}")
+    print(f"Promedio de Cajas Despachadas (Boxes_Shipped): {prom_box_ship:.2f}")
+
+    if amount1 is not None:
+        print("\nPedido con mayor Amount:")
+        print(f"Order_ID: {amount1['ID']}")
+        print(f"Canal: {amount1['channel']}")
+        print(f"Fecha: {amount1['date']}")
+        print(f"Cajas enviadas: {amount1['box_ship']}")
+        print(f"Monto (Amount): ${amount1['amount']:.2f}")
+
+    if amount2 is not None:
+        print("\nSegundo pedido con mayor Amount:")
+        print(f"Order_ID: {amount2['ID']}")
+        print(f"Canal: {amount2['channel']}")
+        print(f"Fecha: {amount2['date']}")
+        print(f"Cajas enviadas: {amount2['box_ship']}")
+        print(f"Monto (Amount): ${amount2['amount']:.2f}")
 
 
 def print_req_5(control):

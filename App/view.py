@@ -23,7 +23,9 @@ def print_menu():
     print("4- Ejecutar Requerimiento 4")
     print("5- Ejecutar Requerimiento 5")
     print("6- Ejecutar Requerimiento 6")
+    print("8- Consultar un pedido por Order_ID")
     print("7- Salir")
+    
 
 def load_data(control):
     """
@@ -51,6 +53,8 @@ def load_data(control):
         archivo = "chocolate_sale_80_ptc.csv"
     elif opcion == "6":
         archivo = "chocolate_sale_100_ptc.csv"
+
+
     else:
         print("Opción incorrecta")
         return control
@@ -133,7 +137,23 @@ def print_data(control, id):
     """
         Función que imprime un dato dado su ID
     """
-    pass    
+    id = input("Ingrese el Order_ID del pedido: ")
+    pedido = logic.buscar_pedido(control, id)
+
+    if pedido is None:
+        print(f"\nNo existe un pedido con el Order_ID {id}")
+        return
+
+    print(f"\nOrder_ID: {pedido['Order_ID']}")
+    print(f"Product: {pedido['Product']}")
+    print(f"Country: {pedido['Country']}")
+    print(f"Channel: {pedido['Channel']}")
+    print(f"Order_Date: {pedido['Order_Date']}")
+    print(f"Discount_Pct: {pedido['Discount_Pct']:.2f}%")
+    print(f"Price_per_Box: ${pedido['Price_per_Box']:.2f}")
+    print(f"Marketing_Spend: ${pedido['Marketing_Spend']:.2f}")
+    print(f"Boxes_Shipped: {pedido['Boxes_Shipped']}")
+    print(f"Amount: ${pedido['Amount']:.2f}") 
 
 def print_req_1(control):
     """
@@ -364,6 +384,9 @@ def main():
         elif int(inputs) == 7:
             working = False
             print("\nGracias por utilizar el programa") 
+        
+        elif int(inputs) == 8:
+            print_data(control, None)
         else:
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)

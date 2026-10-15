@@ -21,6 +21,8 @@ def new_logic():
         "OrdenPais": mlp.new_map(100, 1),
         "OrdenPaisSC": msc.new_map(100, 1),
         "pedidos_por_canal": mlp.new_map(10, 1),
+        "OrdenID": mlp.new_map(200000, 0.5),
+
     }
     return catalog
 
@@ -44,7 +46,7 @@ def load_data(catalog, filename):
             row["Boxes_Shipped"] = int(row["Boxes_Shipped"])
 
             lt.add_last(catalog["orders"], row)
-
+            mlp.put(catalog["OrdenID"], row["Order_ID"], row)
     
             fecha = row["Order_Date"]
             lista_fecha = mlp.get(catalog["OrdenFecha"], fecha)
@@ -178,6 +180,13 @@ def load_data(catalog, filename):
     tiempo = delta_time(start_time, end_time)
 
     return catalog, tiempo, resumen
+
+def buscar_pedido(catalog, order_id):
+    """
+    Retorna el pedido que corresponde al Order_ID dado
+    """
+    return mlp.get(catalog["OrdenID"], order_id)
+
 
 # Funciones de consulta sobre el catálogo
 
